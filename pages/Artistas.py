@@ -32,8 +32,8 @@ df_artistas = df.groupby('primeiro_artista').agg({
 
 # Flatten column names
 df_artistas.columns = ['num_faixas', 'pop_media', 'pop_maxima', 'danceability_media', 
-                      'energy_media', 'valence_media', 'acousticness_media', 
-                      'duracao_media', 'genero_principal']
+                    'energy_media', 'valence_media', 'acousticness_media', 
+                    'duracao_media', 'genero_principal']
 
 df_artistas = df_artistas.reset_index()
 
@@ -57,7 +57,7 @@ pop_min = st.sidebar.slider(
     value=0,
     step=5
 )
-
+ 
 # Filter by genre
 generos_artistas = ['Todos'] + sorted(df_artistas['genero_principal'].unique().tolist())
 genero_filtro = st.sidebar.selectbox(
@@ -344,7 +344,7 @@ if len(artistas_disponiveis) >= 2:
     
     comp_data = {
         'Métrica': ['Número de Faixas', 'Popularidade Média', 'Popularidade Máxima', 
-                   'Danceabilidade', 'Energia', 'Valência', 'Acousticness', 'Duração Média'],
+                'Danceabilidade', 'Energia', 'Valência', 'Acousticness', 'Duração Média'],
         artista1: [
             dados_artista1['num_faixas'],
             f"{dados_artista1['pop_media']:.1f}",
@@ -396,30 +396,34 @@ if len(generos_analise) > 1:
 with st.sidebar:
     st.markdown("---")
     st.subheader("🎵 Insights dos Artistas")
-    
+
     if len(df_artistas_filtrado) > 0:
         # Most productive artist
         artista_produtivo = df_artistas_filtrado.loc[df_artistas_filtrado['num_faixas'].idxmax()]
-        st.metric("Mais Produtivo", 
-                 artista_produtivo['primeiro_artista'][:20] + ("..." if len(artista_produtivo['primeiro_artista']) > 20 else ""),
-                 f"{artista_produtivo['num_faixas']} faixas")
-        
+        st.metric(
+            "Mais Produtivo",
+            artista_produtivo['primeiro_artista'][:20] + ("..." if len(artista_produtivo['primeiro_artista']) > 20 else ""),
+            f"{artista_produtivo['num_faixas']} faixas"
+        )
+
         # Most popular artist
         artista_popular = df_artistas_filtrado.loc[df_artistas_filtrado['pop_media'].idxmax()]
-        st.metric("Mais Popular", 
-                 artista_popular['primeiro_artista'][:20] + ("..." if len(artista_popular['primeiro_artista']) > 20 else ""),
-                 f"{artista_popular['pop_media']:.1f}/100")
-        
+        st.metric(
+            "Mais Popular",
+            artista_popular['primeiro_artista'][:20] + ("..." if len(artista_popular['primeiro_artista']) > 20 else ""),
+            f"{artista_popular['pop_media']:.1f}/100"
+        )
+
         # Correlation insight
         corr_pop_tracks = df_artistas_filtrado['pop_media'].corr(df_artistas_filtrado['num_faixas'])
         st.metric("Correlação Pop/Faixas", f"{corr_pop_tracks:.3f}")
-        
+
         if corr_pop_tracks > 0.1:
             st.success("✅ Artistas com mais faixas tendem a ser mais populares!")
         elif corr_pop_tracks < -0.1:
             st.warning("⚠️ Artistas com mais faixas tendem a ser menos populares")
         else:
             st.info("ℹ️ Pouca correlação entre número de faixas e popularidade")
-    
+
     st.markdown("---")
     st.info("💡 Use os filtros acima para focar em artistas específicos por produtividade, gênero ou popularidade!")
